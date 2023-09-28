@@ -1,3 +1,5 @@
+import board
+import adafruit_dht
 import RPi.GPIO as GPIO
 import time
 
@@ -23,6 +25,11 @@ GPIO_ECHO = 24
 
 # buzzer pin
 GPIO_BUZZER = 21
+
+#temp sensor pins
+TEMP_SENSOR = adafruit_dht.DHT11
+TEMP_PIN = 26
+test = dhtDevice = adafruit_dht.DHT11(board.D26)
 
 #GPIO Modus (BOARD / BCM)
 GPIO.setmode(GPIO.BCM)
@@ -125,18 +132,36 @@ if __name__ == '__main__':
     display_init()
     try:
         while True:
+            # get data from temperature/humidty sensor only if new data is available
+            try:
+                temperature = test.temperature
+                humidity = test.humidity
+            except:
+                print("no new data")
+            # get data from ultra sonic sensor
             distance = measure_distance()
             print ("Abstand zum Wasser: %.1f cm" % distance)
             if distance < 20:
                 lcd_send_byte(LCD_LINE_1, LCD_CMD)
                 lcd_message("Gefahr!!!")
+                lcd_send_byte(LCD_LINE_2, LCD_CMD)
+                lcd_message("Hochwasser!!!")
+
                 GPIO.output(GPIO_BUZZER, GPIO.HIGH)
                 time.sleep(0.5)
                 GPIO.output(GPIO_BUZZER, GPIO.LOW)
                 time.sleep(0.2)
-            else:
+            elif humidity is not None and temperature is not None:
+                print('Temperatur: ' + str(temperature) + "*C")
+                print("Luftfeuchtigkeit: " + str(humidity)  +  "%")
                 lcd_send_byte(LCD_LINE_1, LCD_CMD)
-                lcd_message("")
+                lcd_message("Temperatur: " + str(temperature) + "C")
+                lcd_send_byte(LCD_LINE_2, LCD_CMD)
+                lcd_message("Humidity: " + str(humidity) + "%")
+
+            #else:
+                #lcd_send_byte(LCD_LINE_1, LCD_CMD)
+                #lcd_message("")
             time.sleep(1)
 
         # Beim Abbruch durch STRG+C resetten

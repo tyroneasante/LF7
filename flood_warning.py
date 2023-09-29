@@ -2,6 +2,12 @@ import board
 import adafruit_dht
 import RPi.GPIO as GPIO
 import time
+import sqlite3
+
+# connect to database
+import sqlite3
+con = sqlite3.connect("hydro_alert.db")
+cur = con.cursor()
 
 # display pins
 LCD_RS = 4
@@ -29,7 +35,7 @@ GPIO_BUZZER = 21
 #temp sensor pins
 TEMP_SENSOR = adafruit_dht.DHT11
 TEMP_PIN = 26
-test = dhtDevice = adafruit_dht.DHT11(board.D26)
+temp_sensor = dhtDevice = adafruit_dht.DHT11(board.D26)
 
 #GPIO Modus (BOARD / BCM)
 GPIO.setmode(GPIO.BCM)
@@ -133,9 +139,11 @@ if __name__ == '__main__':
     try:
         while True:
             # get data from temperature/humidty sensor only if new data is available
+            temperature = None
+            humidity = None
             try:
-                temperature = test.temperature
-                humidity = test.humidity
+                temperature = temp_sensor.temperature
+                humidity = temp_sensor.humidity
             except:
                 print("no new data")
             # get data from ultra sonic sensor
@@ -159,9 +167,13 @@ if __name__ == '__main__':
                 lcd_send_byte(LCD_LINE_2, LCD_CMD)
                 lcd_message("Humidity: " + str(humidity) + "%")
 
-            #else:
-                #lcd_send_byte(LCD_LINE_1, LCD_CMD)
-                #lcd_message("")
+            # insert into database
+            data = [
+                (int(time.time()), temperature, humidity, distance,)
+            ]
+            cur.executemany("INSERT INTO weather_data VALUES(?, ?, ?, ?)", data)
+            con.commit()
+
             time.sleep(1)
 
         # Beim Abbruch durch STRG+C resetten

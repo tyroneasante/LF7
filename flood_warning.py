@@ -1,4 +1,4 @@
-import board
+import Adafruit_DHT
 import adafruit_dht
 import RPi.GPIO as GPIO
 import time
@@ -33,10 +33,8 @@ GPIO_ECHO = 24
 GPIO_BUZZER = 21
 
 #temp sensor pins
-TEMP_SENSOR = adafruit_dht.DHT11
-TEMP_PIN = 26
-temp_sensor = dhtDevice = adafruit_dht.DHT11(board.D26)
-
+DHT_SENSOR = Adafruit_DHT.DHT11
+DHT_PIN = 26
 #GPIO Modus (BOARD / BCM)
 GPIO.setmode(GPIO.BCM)
 
@@ -142,8 +140,7 @@ if __name__ == '__main__':
             temperature = None
             humidity = None
             try:
-                temperature = temp_sensor.temperature
-                humidity = temp_sensor.humidity
+                humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
             except:
                 print("no new data")
             # get data from ultra sonic sensor

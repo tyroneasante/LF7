@@ -1,5 +1,4 @@
 import Adafruit_DHT
-import adafruit_dht
 import RPi.GPIO as GPIO
 import time
 import sqlite3
@@ -137,12 +136,12 @@ if __name__ == '__main__':
     try:
         while True:
             # get data from temperature/humidty sensor only if new data is available
-            temperature = None
-            humidity = None
             try:
                 humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
             except:
                 print("no new data")
+                temperature = None
+                humidity = None
             # get data from ultra sonic sensor
             distance = measure_distance()
             print ("Abstand zum Wasser: %.1f cm" % distance)

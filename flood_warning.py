@@ -2,9 +2,14 @@ import Adafruit_DHT
 import RPi.GPIO as GPIO
 import time
 import sqlite3
+import matplotlib.pyplot as plt
+
+# data visualization labels
+plt.xlabel('Zeitpunkt')
+plt.ylabel('Temperatur (C)')
+plt.title('Temperaturverlauf')
 
 # connect to database
-import sqlite3
 con = sqlite3.connect("hydro_alert.db")
 cur = con.cursor()
 

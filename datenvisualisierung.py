@@ -12,7 +12,7 @@ current_time = int(time.time())
 yesterday = current_time - 84600 
 
 # SQL-Abfrage zum Abrufen der initialen Daten aus der Datenbank
-cursor.execute('SELECT timestamp, water_level FROM weather_data ORDER BY timestamp DESC LIMIT 10')
+cursor.execute('SELECT timestamp, water_level FROM weather_data ORDER BY timestamp DESC LIMIT 100')
 
 # Daten aus der Abfrage abrufen
 data = cursor.fetchall()
@@ -34,16 +34,15 @@ plt.style.use('grayscale')
 
 # Funktion zum Aktualisieren des Plots
 def update(frame):
-    cursor.execute('SELECT timestamp, water_level FROM weather_data ORDER BY timestamp DESC LIMIT 10')
+    cursor.execute('SELECT timestamp, water_level FROM weather_data ORDER BY timestamp DESC LIMIT 100')
     new_data = cursor.fetchall()
     new_data.reverse()
     
     
     new_x = [datetime.datetime.utcfromtimestamp(row[0]).strftime('%H:%M:%S') for row in new_data]
     new_y = [row[1] for row in new_data]
-    print(len(new_x))
-    ax.set_xticks(new_x)
-    ax.set_xlim(new_x[0], new_x[9])
+    ax.set_xticks(new_x[::10])
+    ax.set_xlim(new_x[0], new_x[99])
     ax.set_ylim(0, 1200)
     line.set_data(new_x, new_y)
     

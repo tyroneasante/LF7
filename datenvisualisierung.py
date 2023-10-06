@@ -43,7 +43,7 @@ def update(frame):
     new_y = [row[1] for row in new_data]
     ax.set_xticks(new_x[::10])
     ax.set_xlim(new_x[0], new_x[99])
-    ax.set_ylim(0, 1200)
+    ax.set_ylim(0, 20)
     line.set_data(new_x, new_y)
     
     plt.pause(0.01)

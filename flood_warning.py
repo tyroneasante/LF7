@@ -150,7 +150,7 @@ if __name__ == '__main__':
             # get data from ultra sonic sensor
             distance = measure_distance()
             print ("Abstand zum Wasser: %.1f cm" % distance)
-            if distance < 20:
+            if distance < 5:
                 lcd_send_byte(LCD_LINE_1, LCD_CMD)
                 lcd_message("Gefahr!!!")
                 lcd_send_byte(LCD_LINE_2, LCD_CMD)
@@ -180,5 +180,6 @@ if __name__ == '__main__':
         # Beim Abbruch durch STRG+C resetten
     except KeyboardInterrupt:
         print("Messung vom User gestoppt")
+        display_init()
         GPIO.cleanup()
         con.close()
